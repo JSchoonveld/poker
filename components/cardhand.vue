@@ -2,10 +2,15 @@
   <div class="cardhand-container">
     <div v-if="type === 'dealer'" class="hand">
       <div class="hand-info">
-        Dealer total: {{ $store.state.blackjack.count.dealer }}
+        <div v-if="$store.state.blackjack.gameState === 'finished'">
+          Dealer total: {{ $store.state.blackjack.count.dealer }}
+        </div>
       </div>
       <div class="hand-cards">
-        <div v-if="$store.state.blackjack.round === 0" class="hand-cards">
+        <div
+          v-if="$store.state.blackjack.gameState === 'ongoing'"
+          class="hand-cards"
+        >
           <closedcard :suite="cards[0].suite"></closedcard>
           <card :suite="cards[1].suite" :value="cards[1].value"></card>
         </div>

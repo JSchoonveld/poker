@@ -45,11 +45,13 @@ export const state = () => ({
     ],
   },
   round: 0,
+  gameState: 'ongoing',
   cardAmount: 2,
   count: {
     dealer: 0,
     player: 0,
   },
+  message: '',
 })
 
 export const mutations = {
@@ -103,6 +105,16 @@ export const mutations = {
       value: Math.floor(Math.random() * 13 + 1),
     }
     state.cards.dealerCards.push(newCardDealer)
+  },
+  gameEnd(state, result) {
+    if (result === 'won') {
+      state.message = 'You won!'
+    } else if (result === 'lost') {
+      state.message = 'You lost'
+    } else {
+      state.message = 'Push!'
+    }
+    state.gameState = 'finished'
   },
 }
 

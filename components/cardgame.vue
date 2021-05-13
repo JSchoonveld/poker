@@ -27,7 +27,7 @@ export default {
   flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
-  width: 1000px;
+  width: fit-content;
   height: fit-content;
 }
 </style>
