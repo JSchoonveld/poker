@@ -11,6 +11,9 @@
     <div class="message">
       {{ $store.state.blackjack.message }}
     </div>
+    <div v-if="$store.state.blackjack.gameState === 'finished'">
+      <v-btn elevation="2" @click="newGame"> Play again </v-btn>
+    </div>
   </div>
 </template>
 
@@ -26,7 +29,20 @@ export default {
       return this.$store.state.blackjack.cards
     },
   },
+  created() {},
+  mounted() {
+    this.$store.commit('blackjack/setCardsPlayer', 2)
+    this.$store.commit('blackjack/setCardsDealer', 2)
+  },
   methods: {
+    newGame() {
+      this.$store.commit('blackjack/setCardsPlayer', 2)
+      this.$store.commit('blackjack/setCardsDealer', 2)
+      this.$store.commit(`blackjack/changeCountPlayer`)
+      this.$store.commit(`blackjack/changeCountDealer`)
+      this.$store.commit('blackjack/gameEnd', 'newGame')
+      this.$store.commit('blackjack/changeGameState', 'ongoing')
+    },
     stand() {
       if (
         this.$store.state.blackjack.count.dealer <=
@@ -37,7 +53,6 @@ export default {
           this.$store.commit('blackjack/changeGameRound')
           this.$store.commit('blackjack/addDealerCard')
           this.$store.commit(`blackjack/changeCountDealer`)
-
           if (this.$store.state.blackjack.count.dealer >= 17) {
             if (
               this.$store.state.blackjack.count.dealer <= 21 &&

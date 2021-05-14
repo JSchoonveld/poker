@@ -1,3 +1,5 @@
+const Card = require('../helpers/commonFunctions')
+
 export const state = () => ({
   cardTypes: {
     1: 'Ace',
@@ -15,34 +17,8 @@ export const state = () => ({
     13: 'King',
   },
   cards: {
-    dealerCards: [
-      {
-        suite: ['diamond', 'heart', 'club', 'spade'][
-          Math.floor(Math.random() * 4)
-        ],
-        value: Math.floor(Math.random() * 13 + 1),
-      },
-      {
-        suite: ['diamond', 'heart', 'club', 'spade'][
-          Math.floor(Math.random() * 4)
-        ],
-        value: Math.floor(Math.random() * 13 + 1),
-      },
-    ],
-    playerCards: [
-      {
-        suite: ['diamond', 'heart', 'club', 'spade'][
-          Math.floor(Math.random() * 4)
-        ],
-        value: Math.floor(Math.random() * 13 + 1),
-      },
-      {
-        suite: ['diamond', 'heart', 'club', 'spade'][
-          Math.floor(Math.random() * 4)
-        ],
-        value: Math.floor(Math.random() * 13 + 1),
-      },
-    ],
+    dealerCards: [],
+    playerCards: [],
   },
   round: 0,
   gameState: 'ongoing',
@@ -57,6 +33,25 @@ export const state = () => ({
 export const mutations = {
   changeGameRound(state) {
     state.round++
+  },
+  changeGameState(state, gameState) {
+    state.gameState = gameState
+  },
+  setCardsPlayer(state, amount) {
+    const tempArr = []
+    for (let i = 0; i < amount; i++) {
+      const card = new Card()
+      tempArr.push(card)
+    }
+    state.cards.playerCards = tempArr
+  },
+  setCardsDealer(state, amount) {
+    const tempArr = []
+    for (let i = 0; i < amount; i++) {
+      const card = new Card()
+      tempArr.push(card)
+    }
+    state.cards.dealerCards = tempArr
   },
   changeCountPlayer(state) {
     let total = 0
@@ -89,21 +84,11 @@ export const mutations = {
     state.count.dealer = total
   },
   addPlayerCard(state) {
-    const newCardPlayer = {
-      suite: ['diamond', 'heart', 'club', 'spade'][
-        Math.floor(Math.random() * 4)
-      ],
-      value: Math.floor(Math.random() * 13 + 1),
-    }
+    const newCardPlayer = new Card()
     state.cards.playerCards.push(newCardPlayer)
   },
   addDealerCard(state) {
-    const newCardDealer = {
-      suite: ['diamond', 'heart', 'club', 'spade'][
-        Math.floor(Math.random() * 4)
-      ],
-      value: Math.floor(Math.random() * 13 + 1),
-    }
+    const newCardDealer = new Card()
     state.cards.dealerCards.push(newCardDealer)
   },
   gameEnd(state, result) {
@@ -111,8 +96,10 @@ export const mutations = {
       state.message = 'You won!'
     } else if (result === 'lost') {
       state.message = 'You lost'
-    } else {
+    } else if (result === 'push') {
       state.message = 'Push!'
+    } else if (result === 'newGame') {
+      state.message = ''
     }
     state.gameState = 'finished'
   },
