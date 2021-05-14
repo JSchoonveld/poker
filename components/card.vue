@@ -9,7 +9,11 @@
       </v-icon>
     </div>
     <div class="card-value">
-      {{ $store.state.blackjack.cardTypes[value] }}
+      <div v-for="card in $store.state.blackjack.cardTypes" :key="card.name">
+        <div v-if="card.name === value">
+          {{ card.name }}
+        </div>
+      </div>
     </div>
     <div class="card-suite">
       <v-icon

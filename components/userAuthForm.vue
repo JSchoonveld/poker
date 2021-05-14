@@ -81,6 +81,7 @@ export default {
   input {
     border: 1px solid white;
     background-color: white;
+    padding-left: 5px;
   }
   button {
     background-color: white;

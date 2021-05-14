@@ -1,26 +1,75 @@
 const Card = require('../helpers/commonFunctions')
 
 export const state = () => ({
-  cardTypes: {
-    1: 'Ace',
-    2: '2',
-    3: '3',
-    4: '4',
-    5: '5',
-    6: '6',
-    7: '7',
-    8: '8',
-    9: '9',
-    10: '10',
-    11: 'Jack',
-    12: 'Queen',
-    13: 'King',
-  },
+  cardTypes: [
+    {
+      name: 'ace',
+      value: 11,
+    },
+    {
+      name: '2',
+      value: 2,
+    },
+    {
+      name: '3',
+      value: 3,
+    },
+    {
+      name: '4',
+      value: 4,
+    },
+    {
+      name: '5',
+      value: 5,
+    },
+    {
+      name: '6',
+      value: 6,
+    },
+    {
+      name: '7',
+      value: 7,
+    },
+    {
+      name: '8',
+      value: 8,
+    },
+    {
+      name: '9',
+      value: 9,
+    },
+    {
+      name: '10',
+      value: 10,
+    },
+    {
+      name: 'Jack',
+      value: 10,
+    },
+    {
+      name: 'Queen',
+      value: 10,
+    },
+    {
+      name: 'King',
+      value: 10,
+    },
+  ],
   cards: {
     dealerCards: [],
-    playerCards: [],
+    playerCards: [
+      {
+        name: 'hand1',
+        cards: [],
+      },
+      {
+        name: 'hand2',
+        cards: [],
+      },
+    ],
   },
   round: 0,
+  playerHands: 1,
   gameState: 'ongoing',
   cardAmount: 2,
   count: {
@@ -37,58 +86,66 @@ export const mutations = {
   changeGameState(state, gameState) {
     state.gameState = gameState
   },
-  setCardsPlayer(state, amount) {
-    const tempArr = []
-    for (let i = 0; i < amount; i++) {
-      const card = new Card()
-      tempArr.push(card)
+  setCardsPlayer(state, options) {
+    for (let i = 0; i < options.hands; i++) {
+      const tempArr = []
+      for (let a = 0; a < options.amount; a++) {
+        const card = new Card(undefined, state.cardTypes)
+        tempArr.push(card)
+      }
+      state.cards.playerCards[i].cards = tempArr
     }
-    state.cards.playerCards = tempArr
   },
   setCardsDealer(state, amount) {
     const tempArr = []
     for (let i = 0; i < amount; i++) {
-      const card = new Card()
+      const card = new Card(undefined, state.cardTypes)
       tempArr.push(card)
     }
     state.cards.dealerCards = tempArr
   },
   changeCountPlayer(state) {
     let total = 0
-    state.cards.playerCards.forEach((card) => {
-      if (card.value === 10 || card.value > 10) {
-        total += 10
-      } else if (card.value === 1 && total > 10) {
-        total += 1
-      } else if (card.value === 1 && total <= 10) {
-        total += 11
-      } else {
-        total += card.value
-      }
+    state.cards.playerCards[0].cards.forEach((card) => {
+      total += card.value
     })
+    if (total > 21) {
+      state.cards.playerCards[0].cards.forEach((card) => {
+        if (card.value === 11) {
+          card.value = 1
+          total = 0
+          state.cards.playerCards[0].cards.forEach((card) => {
+            total += card.value
+          })
+        } else if (card.value >= 10) {
+          card.value = 10
+        }
+      })
+    }
     state.count.player = total
   },
   changeCountDealer(state) {
     let total = 0
     state.cards.dealerCards.forEach((card) => {
-      if (card.value === 10 || card.value > 10) {
-        total += 10
-      } else if (card.value === 1 && total > 10) {
-        total += 1
-      } else if (card.value === 1 && total <= 10) {
-        total += 11
-      } else {
-        total += card.value
-      }
+      total += card.value
     })
+    if (total > 21) {
+      state.cards.dealerCards.forEach((card) => {
+        if (card.value === 11) {
+          card.value = 1
+        } else if (card.value >= 10) {
+          card.value = 10
+        }
+      })
+    }
     state.count.dealer = total
   },
   addPlayerCard(state) {
-    const newCardPlayer = new Card()
-    state.cards.playerCards.push(newCardPlayer)
+    const newCardPlayer = new Card(undefined, state.cardTypes)
+    state.cards.playerCards[0].cards.push(newCardPlayer)
   },
   addDealerCard(state) {
-    const newCardDealer = new Card()
+    const newCardDealer = new Card(undefined, state.cardTypes)
     state.cards.dealerCards.push(newCardDealer)
   },
   gameEnd(state, result) {

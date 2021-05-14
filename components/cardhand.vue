@@ -1,39 +1,36 @@
 <template>
   <div class="cardhand-container">
     <div v-if="type === 'dealer'" class="hand">
-      <div class="hand-info">
-        <div v-if="$store.state.blackjack.gameState === 'finished'">
-          Dealer total: {{ $store.state.blackjack.count.dealer }}
-        </div>
-      </div>
       <div class="hand-cards">
         <div
           v-if="$store.state.blackjack.gameState === 'ongoing'"
           class="hand-cards"
         >
-          <closedcard :suite="cards[0].suite"></closedcard>
-          <card :suite="cards[1].suite" :value="cards[1].value"></card>
+          <card :suite="cards[0].suite" :value="cards[0].name"></card>
+          <closedcard style></closedcard>
         </div>
-        <div
-          v-for="(card, index) in $store.state.blackjack.cards.dealerCards"
-          v-else
-          :key="index"
-        >
-          <card :suite="cards[index].suite" :value="cards[index].value"></card>
+        <div v-else>
+          <transition-group style="display: flex" name="show">
+            <div
+              v-for="(card, index) in $store.state.blackjack.cards.dealerCards"
+              :key="index"
+              class="card"
+            >
+              <card
+                style=""
+                :suite="cards[index].suite"
+                :value="cards[index].name"
+              ></card>
+            </div>
+          </transition-group>
         </div>
       </div>
     </div>
     <div v-else class="hand">
       <div class="hand-cards">
-        <div
-          v-for="(card, index) in $store.state.blackjack.cards.playerCards"
-          :key="index"
-        >
-          <card :suite="cards[index].suite" :value="cards[index].value"></card>
+        <div v-for="(card, index) in cards" :key="index">
+          <card :suite="cards[index].suite" :value="cards[index].name"></card>
         </div>
-      </div>
-      <div class="hand-info">
-        Your total: {{ $store.state.blackjack.count.player }}
       </div>
     </div>
   </div>
@@ -43,10 +40,7 @@
 export default {
   name: 'Cardhand',
   props: ['cards', 'type'],
-  mounted() {
-    this.$store.commit(`blackjack/changeCountPlayer`)
-    this.$store.commit(`blackjack/changeCountDealer`)
-  },
+  mounted() {},
 }
 </script>
 
@@ -59,15 +53,18 @@ export default {
   .hand {
     display: flex;
     flex-direction: column;
-    .hand-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 10px;
-    }
     .hand-cards {
       display: flex;
     }
   }
+}
+
+.show-enter-active,
+.show-leave-active {
+  transition-duration: 0.5s;
+  transform: rotateY(90deg);
+}
+.show-enter, .show-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
